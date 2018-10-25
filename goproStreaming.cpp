@@ -7,17 +7,25 @@
 cv::Mat detectFace(cv::Mat &image, std::string &cascade_file, int &flag, cv::Scalar);
 std::string setCascade();
 cv::Mat detectFaceAndSmile(cv::Mat &image, int &flag);
+void streaming(); 
+
 
 int main(int argc, char ** args){
 
-    cv::Mat a = cv::imread(args[1]);
+    // cv::VideoCapture cap("http://10.5.5.9:8080/live/amba.m3u8");
+    // cv::namedWindow("GoPro");
+    cv::Mat frame = cv::imread(args[1]);
+    // cv::Mat frame;
+    /*do {
+     * 		cap >> frame;
+     * 		imshow("Cap", detectFaceAndSmile(frame, flag);
+     * } while (waitkey(30) < 0);
+     *
+     */
     int flag = 1;
-    // std::string smile= "/usr/share/opencv/haarcascades/haarcascade_smile.xml";
-    // std::string eye = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
 
-    // cv::Mat detectFaceImage = detectFace(a, smile, flag, cv::Scalar(0, 200, 0));
-    // cv::Mat detectEyeImage  = detectFace(detectFaceImage, eye, flag, cv::Scalar(200, 0, 0));
-    imshow("image", detectFaceAndSmile(a, flag));
+    imshow("image", detectFaceAndSmile(frame, flag));
+
 
 #if defined(VERBOSE)
     if (flag == 0) printf("Faces detected\n");
@@ -49,38 +57,16 @@ cv::Mat detectFaceAndSmile(cv::Mat &image, int &flag) {
 		);
 	for (std::size_t j = 0; j < smile.size(); j++) {
 	    if ((faces[i] & smile[j]) == smile[j]) {
-	rectangle(image, 
-		cv::Point(smile[j].x,smile[j].y),
-		cv::Point(smile[j].x + smile[j].width, 
-		    smile[j].y + smile[j].height),
-		cv::Scalar(200, 0, 0),
-		3,
-		CV_AA
-		);
+		rectangle(image, 
+			cv::Point(smile[j].x,smile[j].y),
+			cv::Point(smile[j].x + smile[j].width, 
+			    smile[j].y + smile[j].height),
+			cv::Scalar(200, 0, 0),
+			3,
+			CV_AA
+			);
 	    }
 	}
-    }
-    return image;
-}
-
-cv::Mat detectFace(cv::Mat &image, std::string &cascade_file, int &flag, cv::Scalar s) {
-    cv::CascadeClassifier cascade;
-    cascade.load(cascade_file);
-
-    std::vector<cv::Rect> faces;
-    cascade.detectMultiScale(image, faces, 1.1, 3, 0, cv::Size(20,20));
-
-    if (faces.size() > 0) flag = 0;
-
-    for (long unsigned int i = 0; i < faces.size(); i++){
-	rectangle(image, 
-		cv::Point(faces[i].x,faces[i].y),
-		cv::Point(faces[i].x + faces[i].width, 
-		    faces[i].y + faces[i].height),
-		s,
-		3,
-		CV_AA
-		);
     }
     return image;
 }
