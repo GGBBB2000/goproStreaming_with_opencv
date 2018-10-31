@@ -11,20 +11,24 @@ void streaming();
 
 
 int main(int argc, char ** args){
-
-    // cv::VideoCapture cap("http://10.5.5.9:8080/live/amba.m3u8");
-    // cv::namedWindow("GoPro");
-    cv::Mat frame = cv::imread(args[1]);
-    // cv::Mat frame;
-    /*do {
-     * 		cap >> frame;
-     * 		imshow("Cap", detectFaceAndSmile(frame, flag);
-     * } while (waitkey(30) < 0);
-     *
-     */
     int flag = 1;
+    //cv::VideoCapture cap("http://10.5.5.9:8080/live/amba.m3u8");
+    // cv::VideoCapture cap("http://10.5.5.9:8080/gp/gpControl/executep1=gpStream&c1=restart");
+    //cv::VideoCapture cap("http://10.5.5.9/gp/gpControl/execute?p1=gpStream&a1=proto_v2&c1=restart");
+    cv::VideoCapture cap("udp://10.5.5.9:8554");
+    // cv::VideoCapture cap(0);
+    // cv::namedWindow("GoPro");
+    //cv::Mat frame = cv::imread(args[1]);
+    cv::Mat frame;
+    do {
+     		cap >> frame;
+     		imshow("Cap", detectFaceAndSmile(frame, flag));
+		// imshow("Cap", frame);
+    } while (cv::waitKey(10) < 0);
+     
+     
 
-    imshow("image", detectFaceAndSmile(frame, flag));
+    //imshow("image", detectFaceAndSmile(frame, flag));
 
 
 #if defined(VERBOSE)
@@ -35,12 +39,17 @@ int main(int argc, char ** args){
 }
 
 cv::Mat detectFaceAndSmile(cv::Mat &image, int &flag) {
+
     cv::CascadeClassifier face_cascade; 
     cv::CascadeClassifier smile_cascade; 
+
     face_cascade.load("/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml");
+    // face_cascade.load("learning/data/cascade/trained_data/cascade.xml");
     smile_cascade.load("/usr/share/opencv/haarcascades/haarcascade_smile.xml");
+
     std::vector<cv::Rect> faces;
     std::vector<cv::Rect> smile;
+
     face_cascade.detectMultiScale(image, faces, 1.1, 3, 0, cv::Size(20,20));
     smile_cascade.detectMultiScale(image, smile, 1.1, 3, 0, cv::Size(20,20));
 
@@ -67,6 +76,7 @@ cv::Mat detectFaceAndSmile(cv::Mat &image, int &flag) {
 			);
 	    }
 	}
+	
     }
     return image;
 }
